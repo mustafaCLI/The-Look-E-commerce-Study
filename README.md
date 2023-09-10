@@ -5,7 +5,7 @@ The ability to analyze data with a cloud-based data warehouse and analytics plat
 To provide Important Inshights (Key Answers) for crucial decisions by the Adminstrator of a fictitious eCommerce clothing site.
 
 1. What are the top 5 Countries having maximum customers?
-2. Show the sales count with respect to customers no. of top 5 Countries?
+2. Show the all orders placed with respect to customers by Countries?
 3. What are the Best Selling Items with quantity and revenue?
 4. Show the sales revenue of all product by country in descending order?
 5. Top 10 Customers by Average Order Price?
@@ -44,8 +44,53 @@ group by country order by customers desc limit 5;
 ## Insights
 We have total 16 Countires amongst them China, United States and Brasil having maximum customers which is 70% more than the rest of all.
 
-## Question 2. Show the sales count with respect to customers no. of top 5 Countries?
+## Question 2. Show the all orders placed with respect to customers by Countries?
+```SQL
+WITH users_orders AS (
+    SELECT user_id, country, order_id,num_of_item 
+    FROM bigquery-public-data.thelook_ecommerce.users AS u
+    INNER JOIN bigquery-public-data.thelook_ecommerce.orders AS o
+    ON u.id = o.user_id)
+SELECT country, COUNT(DISTINCT user_id) AS CUSTOMERS, 
+COUNT(order_id) AS ORDERS,
+SUM(num_of_item) AS QUANTITY
+FROM users_orders
+GROUP BY country
+ORDER BY  QUANTITY DESC
+LIMIT 10;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/7daf990e-e0db-4c86-b5c5-5668b69b28e4)
 
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/8aaa3e5b-41b1-4bad-82be-2a58efd6a937)
+
+Chart 1
+
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/a33cda61-b6f8-46f4-bc20-096228b47427)
+
+Chart 2
+## Insight
+There is a linear relationship between No. of Customers and orders. If customer is 1 then order will be 1.56. 
+
+Also Another linear relationship between No. of Customers and product quantities. The equation shows 2.9 quantities are being sold per customers in all top country an average.
+
+## Question 3. What are the Best Selling Brands with quantity and revenue?
+``` sql
+    SELECT 
+    p.brand, sum(num_of_item) as Quantity, 
+    ROUND(SUM(sale_price * num_of_item), 1) AS Revenue
+    FROM bigquery-public-data.thelook_ecommerce.orders AS o 
+    INNER JOIN bigquery-public-data.thelook_ecommerce.order_items AS oi
+    ON o.order_id = oi.order_id
+    INNER JOIN bigquery-public-data.thelook_ecommerce.products AS p
+    ON oi.id = p.id
+    WHERE oi.status NOT IN ('Cancelled', 'Returned')
+    GROUP BY brand 
+    ORDER BY Revenue DESC
+    LIMIT 10;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/5c77748b-d9e7-4e89-927e-dd309e467955)
+
+## Insight
 
 
 
