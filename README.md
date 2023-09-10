@@ -16,7 +16,7 @@ To provide Important Inshights (Key Answers) for crucial decisions by the Admins
 10. Show the Customer's Gender by top countries?
 11. Show the Customer's Age Group with countries?
 12. What are the most canceled and returned product/brand?
-13. What are the most canceled and returned product-category?
+13. What are the least canceled and returned product-category?
 14. What marketing channels are doing well?
 15. Show the 10 customer ids and emails with the largest total overall purchase?
 16. Show all Customers Name, Age and Country who ordered only once?
