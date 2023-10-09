@@ -9,17 +9,16 @@ To provide Important Inshights (Key Answers) for crucial decisions by the Admins
 3. What are the Best Selling Items with quantity and revenue?
 4. Show the sales revenue of all product by country in descending order?
 5. Top 10 Customers by Average Order Price?
-6. Top 10 customers with the highest average price per order?
-7. Top 5 Highest Sold Products Monthly (Quantity)?
-8. Top 5 Least Sold Products Monthly & Yearly?
-9. Show the Customers by Country?
-10. Show the Customer's Gender by top countries?
-11. Show the Customer's Age Group with countries?
-12. What are the most canceled and returned product/brand?
-13. What are the least canceled and returned product-category?
-14. What marketing channels are doing well?
-15. Show the 10 customer ids and emails with the largest total overall purchase?
-16. Show all Customers Name, Age and Country who ordered only once?
+6. Top 5 Highest Sold Products Monthly (Quantity)?
+7. Top 5 Least Sold Products Monthly & Yearly?
+
+9. Show the Customer's Gender by top countries?
+10. Show the Customer's Age Group with countries?
+11. What are the most canceled and returned product/brand?
+12. What are the least canceled and returned product-category?
+13. What marketing channels are doing well?
+14. Show the 10 customer ids and emails with the largest total overall purchase?
+15. Show all Customers Name, Age and Country who ordered only once?
 
 # Overview
 The Look E-commerce Case Study (Big Query)
@@ -91,6 +90,162 @@ Also Another linear relationship between No. of Customers and product quantities
 ![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/5c77748b-d9e7-4e89-927e-dd309e467955)
 
 ## Insight
+
+## 4. Show the sales revenue of all product by country in descending order?
+```sql
+ SELECT u.country as Country, round(sum(num_of_item*sale_price),1) as Revenue
+    FROM bigquery-public-data.thelook_ecommerce.order_items as oi
+    left join bigquery-public-data.thelook_ecommerce.orders as o
+    on oi.order_id = o.order_id
+    left join  bigquery-public-data.thelook_ecommerce.users as u
+    on oi.user_id = u.id
+    group by Country
+    order by Revenue desc
+    limit 16;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/bfa3587b-01cb-43b0-bcd4-7b7bb21ee4fa)
+
+## Insight
+
+## 5. Top 10 Customers by Average Order Price?
+```
+ with Users as
+    (SELECT u.first_name||last_name||email as User, 
+    round(avg(num_of_item*sale_price),1) 
+    as    AvgOrderPrice
+    FROM bigquery-public-data.thelook_ecommerce.order_items as oi
+    left join bigquery-public-data.thelook_ecommerce.orders as o
+    on oi.order_id = o.order_id
+    left join  bigquery-public-data.thelook_ecommerce.users as u
+    on oi.user_id = u.id
+    group by User
+    order by AvgOrderPrice desc
+    limit 10)
+    select left(User,5) as Name, AvgOrderPrice
+    from Users;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/75f35e09-5fad-4277-b52f-d54225482333)
+
+## Insight
+
+
+## 6. Top 5 Highest Sold Products Monthly (Quantity)?
+
+```
+select sum(o.num_of_item) as Sold,
+    format_date('%B',o.created_at) as Month
+    from bigquery-public-data.thelook_ecommerce.orders as o
+    group by Month
+    order by Sold DESC
+    limit 5;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/02ce5289-696e-409e-8922-d479251b9e1e)
+
+## Insight
+
+
+## 7. Top 5 Least Sold Products Monthly & Yearly?
+```
+select sum(o.num_of_item) as Sold,
+    format_date("%Y",o.created_at) as Year
+    from bigquery-public-data.thelook_ecommerce.orders as o
+    group by 2
+    order by 1 asc
+    limit 5;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/ed1977c3-89e8-46f1-9def-91afd281b6f0)
+
+## 8. Show the Customer's Gender by top countries?
+```
+select country as Country,
+    sum(case when gender = 'M' then 1  else null end) as Male,
+    sum(case when gender = 'F' then 1  else null end) as Female
+    from bigquery-public-data.thelook_ecommerce.users
+    group by 1
+    order by 2 desc
+    limit 10;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/ad829842-768e-46ec-843b-d182fae48495)
+
+## 9. Show the Customer's Age Group by Country?
+```
+select
+    case 
+    when u.age < 12 then 'Kids'  
+    when u.age between 12 and 20 then 'Teenager'
+    when u.age between 20 and 40 then 'young_adult'
+    when u.age between 40 and 60 then 'adult'
+    else 'Old' end as Age_Group,
+    count(o.num_of_item) as Orders
+    from bigquery-public-data.thelook_ecommerce.users as u
+    right join bigquery-public-data.thelook_ecommerce.orders as o
+    on o.user_id = u.id
+    group by 1
+    order by 2 desc
+    limit 10;
+```
+    ![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/d6ea8666-7c93-4d46-a980-2da2aa56f8e7)
+
+
+## 10. What are the most canceled and returned product/brand?
+    
+````
+  select p.brand, count(distinct p.id) as Returned
+    from bigquery-public-data.thelook_ecommerce.order_items as oi 
+    left join bigquery-public-data.thelook_ecommerce.products as p
+    on oi.product_id = p.id
+    where oi.status in ('Returned')
+    group by 1
+    order by 2 desc
+    limit 5;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/a078d5d1-6d1f-481a-bde3-f9064f00ea10)
+
+## 11. What are the least canceled and returned product-category?
+```
+select p.category, count(distinct p.id) as Returned
+    from bigquery-public-data.thelook_ecommerce.order_items as oi 
+    left join bigquery-public-data.thelook_ecommerce.products as p
+    on oi.product_id = p.id
+    where oi.status in ('Returned')
+    group by 1
+    order by 2 desc
+    limit 5;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/1167ff5a-b406-430e-ba79-65527d52025f)
+
+## 12. What marketing channels are doing well?
+
+```
+select traffic_source as MarktChannel, count(distinct oi.order_id) as Orders 
+from bigquery-public-data.thelook_ecommerce.users as u 
+left join  bigquery-public-data.thelook_ecommerce.order_items as oi
+on  u.id = oi.user_id
+where oi.status not in ('Cancelled', 'Returned')
+group by 1
+order by 2 desc
+limit 10;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/1466f85f-2837-43b9-9f6f-fa7bc59613bb)
+
+### 13. Show the 10 customer ids and emails with the largest total overall purchase?
+```
+select u.email, u.id, round(sum(oi.Total_Price_per_order),1) as TtlPurchased from
+(select  order_id, sum(sale_price) as Total_Price_per_order from bigquery-public-data.thelook_ecommerce.order_items 
+group by 1) as oi
+inner join 
+(select order_id, user_id from bigquery-public-data.thelook_ecommerce.orders) as o
+on oi.order_id = o.order_id
+inner join bigquery-public-data.thelook_ecommerce.users as u
+on o.user_id = u.id
+group by 1,2
+order by 3 desc
+limit 10;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/6a465032-87bf-4461-98eb-6693e4991beb)
+
+14. Show all Customers Name, Age and Country who ordered only once?
+
 
 
 
