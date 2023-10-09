@@ -34,11 +34,15 @@ This public dataset is hosted in Google BigQuery and is included in BigQuery's 1
 
 # Case Sutdy (15 Answers)
 ## Question 1. Show the top 5 Countries having maximum customers
-```select count(id) as customers, country 
-from bigquery-public-data.thelook_ecommerce.users 
-group by country order by customers desc limit 5;
 ```
-![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/0e66c298-c2ab-495c-b9cd-19f646fe7e93)
+SELECT country, COUNT(distinct id) AS TotalCustomers
+FROM bigquery-public-data.thelook_ecommerce.users
+GROUP BY country
+ORDER BY TotalCustomers DESC
+LIMIT 5;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/fa006d5e-04c0-4c5b-a1f6-d5fa950a6717)
+
 ## Insights
 We have total 16 Countires amongst them China, United States and Brasil having maximum customers which is 70% more than the rest of all.
 
