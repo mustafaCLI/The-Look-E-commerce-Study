@@ -1,7 +1,7 @@
 # The-Look-E-commerce Case Study (SQL)
-The ability to analyze data with a cloud-based data warehouse and analytics platform such as 𝐁𝐢𝐠𝐐𝐮𝐞𝐫𝐲 is a crucial skill to have as a Data Analyst. In this project I answered 16 important Business Questions with precise inshights.
+The ability to analyze data with a cloud-based data warehouse and analytics platform such as 𝐁𝐢𝐠𝐐𝐮𝐞𝐫𝐲 is a crucial skill to have as a Data Analyst. In this project I answered 15 important Business Questions with precise inshights.
 ![online-fashion-shopping-with-laptop_LINKEDIN](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/43d5a0b2-b8e4-472d-b5ff-577b552c4107)
-# Objective (16 Business Questions)
+# Objective (15 Business Questions)
 To provide Important Inshights (Key Answers) for crucial decisions by the Adminstrator of a fictitious eCommerce clothing site.
 
 1. What are the top 5 Countries having maximum customers?
@@ -11,15 +11,14 @@ To provide Important Inshights (Key Answers) for crucial decisions by the Admins
 5. Top 10 Customers by Average Order Price?
 6. Top 5 Highest Sold Products Monthly (Quantity)?
 7. Top 5 Least Sold Products Monthly & Yearly?
-
-9. Show the Customer's Gender by top countries?
-10. Show the Customer's Age Group with countries?
-11. What are the most canceled and returned product/brand?
-12. What are the least canceled and returned product-category?
-13. What marketing channels are doing well?
-14. Show the 10 customer ids and emails with the largest total overall purchase?
-15. Show all Customers Name, Age and Country who ordered only once?
-
+8. Show the Customer's Gender by top countries?
+9. Show the Customer's Age Group with countries?
+10. What are the most canceled and returned product/brand?
+11. What are the least canceled and returned product-category?
+12. What marketing channels are doing well?
+13. Show the 10 customer ids and emails with the largest total overall purchase?
+14. How many Customers ordered only once all time?
+15. If count > 20,000 who ordered only once then provide customer's count by top 10 country?
 # Overview
 The Look E-commerce Case Study (Big Query)
 TheLook is a fictitious eCommerce clothing site developed by the Looker team. The dataset contains information about customers, products, orders, logistics, web events and digital marketing campaigns. The contents of this dataset are synthetic, and are provided to industry practitioners for the purpose of product discovery, testing, and evaluation.
@@ -33,7 +32,7 @@ This public dataset is hosted in Google BigQuery and is included in BigQuery's 1
 5. Data location: US
 6. Description: Fictitious E-Commerce Dataset
 
-# Case Sutdy (16 Answers)
+# Case Sutdy (15 Answers)
 ## Question 1. Show the top 5 Countries having maximum customers
 ```select count(id) as customers, country 
 from bigquery-public-data.thelook_ecommerce.users 
@@ -185,11 +184,10 @@ select
     limit 10;
 ```
     ![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/d6ea8666-7c93-4d46-a980-2da2aa56f8e7)
-
-
+    
 ## 10. What are the most canceled and returned product/brand?
     
-````
+```
   select p.brand, count(distinct p.id) as Returned
     from bigquery-public-data.thelook_ecommerce.order_items as oi 
     left join bigquery-public-data.thelook_ecommerce.products as p
@@ -228,7 +226,8 @@ limit 10;
 ```
 ![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/1466f85f-2837-43b9-9f6f-fa7bc59613bb)
 
-### 13. Show the 10 customer ids and emails with the largest total overall purchase?
+## 13. Show the 10 customer ids and emails with the largest total overall purchase?
+
 ```
 select u.email, u.id, round(sum(oi.Total_Price_per_order),1) as TtlPurchased from
 (select  order_id, sum(sale_price) as Total_Price_per_order from bigquery-public-data.thelook_ecommerce.order_items 
@@ -244,9 +243,34 @@ limit 10;
 ```
 ![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/6a465032-87bf-4461-98eb-6693e4991beb)
 
-14. Show all Customers Name, Age and Country who ordered only once?
+## 14. How many Customers ordered only once all time?
 
+```
+select sum(OrderCnt) as TotalCount from
+(select id, count(o.order_id) as OrderCnt
+from bigquery-public-data.thelook_ecommerce.users as u
+join
+bigquery-public-data.thelook_ecommerce.orders as o
+on u.id = o.user_id
+group by 1
+having OrderCnt = 1);
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/a14e30a5-5c41-4a18-bab1-cc8d2c95362b)
 
-
-
+## 15. If count > 20,000 who ordered only once then provide customer's count by top 10 country?
+    
+ ```
+select country, sum(orderCnt) as OneTimeOrders, from
+(select id, country, count(o.order_id) as OrderCnt
+from bigquery-public-data.thelook_ecommerce.users as u
+join
+bigquery-public-data.thelook_ecommerce.orders as o
+on u.id = o.user_id
+group by 1,2
+having OrderCnt = 1)
+group by 1
+order by 2 desc
+limit 10;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/babea5ea-26be-4a07-bf0c-ead504e4d44d)
 
