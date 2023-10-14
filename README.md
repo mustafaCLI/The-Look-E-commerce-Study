@@ -1,5 +1,5 @@
 # The-Look-E-commerce Case Study (SQL)
-The ability to analyze data with a cloud-based data warehouse and analytics platform such as 𝐁𝐢𝐠𝐐𝐮𝐞𝐫𝐲 is a crucial skill to have as a Data Analyst. In this project I answered 15 important Business Questions with precise inshights.
+The ability to analyze data with a cloud-based data warehouse and analytics platform such as 𝐁𝐢𝐠𝐐𝐮𝐞𝐫𝐲 is a crucial skill to have as a Data Analyst. In this project I answered 15 important Business Questions with precise insights.
 ![online-fashion-shopping-with-laptop_LINKEDIN](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/43d5a0b2-b8e4-472d-b5ff-577b552c4107)
 # Objective (15 Business Questions)
 To provide Important Inshights (Key Answers) for crucial decisions by the Adminstrator of a fictitious eCommerce clothing site.
