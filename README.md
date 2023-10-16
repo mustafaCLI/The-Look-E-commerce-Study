@@ -277,4 +277,31 @@ order by 2 desc
 limit 10;
 ```
 ![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/babea5ea-26be-4a07-bf0c-ead504e4d44d)
+## 16. Compare between OneTimeOrders and Total Customers by country (Advanced Level)
+```
+with ct1 as
+(SELECT country, COUNT(distinct id) AS TotalCustomers
+FROM bigquery-public-data.thelook_ecommerce.users
+GROUP BY country), 
+ct2 as
+(select country, sum(orderCnt) as OneTimeOrders, from
+(select id, country, count(o.order_id) as OrderCnt
+from bigquery-public-data.thelook_ecommerce.users as u
+join
+bigquery-public-data.thelook_ecommerce.orders as o
+on u.id = o.user_id
+group by 1,2
+having OrderCnt = 1)
+group by 1)
+select t1.country, t2.OneTimeOrders, t1.TotalCustomers, 
+cast(round((t2.OneTimeOrders/t1.TotalCustomers),3) as float64) as of_total 
+from ct1 as t1 join ct2 as t2
+on t1.country = t2.country
+order by 2 desc
+limit 10;
+```
+![image](https://github.com/mustafaCLI/The-Look-E-commerce-Study/assets/121651184/2a332ce4-7afd-4ac7-9d1c-1251451b6c45)
+## Insight
+Clearly can be seen almost half of the total customers are ordering only once all time where China remain in top 1.
+
 
